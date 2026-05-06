@@ -3,16 +3,19 @@ import styled from 'styled-components';
 interface CardProps {
   children: React.ReactNode;
   padding?: string;
-  accent?: boolean; // green border highlight
+  accent?: boolean;
   className?: string;
 }
 
 export const CardBase = styled.div<{ $padding?: string; $accent?: boolean }>`
-  background: var(--bg2);
-  border: 1px solid ${p => p.$accent ? 'var(--accent)' : 'var(--border)'};
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) ,
+    var(--bg3);
+  border: 1px solid ${p => p.$accent ? 'var(--gold)' : 'var(--border)'};
   border-radius: var(--radius);
-  padding: ${p => p.$padding ?? '18px 16px'};
-  ${p => p.$accent && 'box-shadow: 0 0 0 1px rgba(0,229,160,0.1);'}
+  padding: ${p => p.$padding ?? '20px 18px'};
+  ${p => p.$accent && 'box-shadow: 0 0 0 1px rgba(212,175,55,0.15), var(--shadow-gold);'}
+  backdrop-filter: blur(6px);
 `;
 
 export function Card({ children, padding, accent = false, className }: CardProps) {
@@ -24,10 +27,10 @@ export function Card({ children, padding, accent = false, className }: CardProps
 }
 
 export const CardTitle = styled.div`
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
+  color: var(--gold);
+  letter-spacing: 1.4px;
   text-transform: uppercase;
   margin-bottom: 12px;
 `;

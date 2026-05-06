@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Room, Player } from './room.types';
+import { Room } from './room.types';
 import { Card, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import PlayerCard from '../../components/player/PlayerCard';
@@ -22,92 +22,74 @@ const Wrap = styled.div`display: flex; flex-direction: column; gap: 14px;`;
 
 const RoomCodeBox = styled.div`
   text-align: center;
-  .label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .label { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
   .code {
-    font-size: 38px;
+    font-size: 42px;
     font-weight: 800;
     font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    letter-spacing: 9px;
-    margin: 6px 0 6px;
+    background: var(--grad-gold);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: 10px;
+    margin: 8px 0 6px;
+    text-shadow: 0 0 30px rgba(212,175,55,0.25);
   }
   .share { font-size: 12px; color: var(--text-muted); }
 `;
 
 const BlindsRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px;
   .pill {
-    font-size: 13px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
+    font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px;
+    background: var(--bg2); border: 1px solid var(--border-strong);
+    font-family: 'DM Mono', monospace;
   }
-  .sb { color: #60a5fa; border-color: #60a5fa44; }
-  .bb { color: #fbbf24; border-color: #fbbf2444; }
+  .sb { color: var(--sun); border-color: rgba(255,215,0,0.35); }
+  .bb { color: var(--gold); border-color: rgba(212,175,55,0.4); }
 `;
 
 const BlindEditRow = styled.div`
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-  justify-content: center;
-  label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px; }
-  input { width: 70px; padding: 8px 10px; font-size: 14px; text-align: center; }
+  display: flex; align-items: flex-end; gap: 8px;
+  margin-top: 14px; justify-content: center;
+  label { font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 4px; letter-spacing: 0.6px; }
+  input { width: 78px; padding: 9px 10px; font-size: 14px; text-align: center; }
 `;
 
 const WaitingCard = styled.div`
-  background: rgba(0,229,160,0.04);
-  border: 1px solid rgba(0,229,160,0.18);
+  background: rgba(255,87,51,0.05);
+  border: 1px solid rgba(255,87,51,0.25);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 8px;
-  .info { .name { font-size: 14px; font-weight: 600; } .req { font-size: 12px; color: var(--text-muted); margin-top: 2px; } }
+  .info { .name { font-size: 14px; font-weight: 600; } .req { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-family: 'DM Mono', monospace; } }
   .btns { display: flex; gap: 6px; }
 `;
 
 const ApproveBtn = styled.button`
-  background: rgba(46,164,79,0.2); border: 1px solid var(--green); color: var(--green);
-  border-radius: 6px; width: 32px; height: 32px; font-size: 16px;
+  background: rgba(18,183,164,0.18); border: 1px solid var(--mint); color: var(--mint);
+  border-radius: 8px; width: 34px; height: 34px; font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  &:hover { background: rgba(46,164,79,0.4); }
+  &:hover { background: rgba(18,183,164,0.36); }
 `;
 const DenyBtn = styled.button`
-  background: rgba(207,34,46,0.12); border: 1px solid var(--red); color: var(--red);
-  border-radius: 6px; width: 32px; height: 32px; font-size: 16px;
+  background: rgba(219,58,52,0.12); border: 1px solid var(--crimson); color: var(--crimson);
+  border-radius: 8px; width: 34px; height: 34px; font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  &:hover { background: rgba(207,34,46,0.3); }
+  &:hover { background: rgba(219,58,52,0.3); }
 `;
 
 const WaitingMsg = styled.div`
-  text-align: center; color: var(--text-muted); font-size: 14px; padding: 16px 0;
+  text-align: center; color: var(--text-muted); font-size: 14px; padding: 18px 0;
   .spin { display: inline-block; animation: spin 2s linear infinite; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 `;
 
-const NeedMoreMsg = styled.p`text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 6px;`;
+const NeedMoreMsg = styled.p`text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 8px;`;
 
 export function RoomLobby({
-  room,
-  mySocketId,
-  isDealer,
-  onApprove,
-  onKick,
-  onStart,
-  onUpdateBlinds,
-  editSb,
-  editBb,
-  setEditSb,
-  setEditBb,
+  room, mySocketId, isDealer,
+  onApprove, onKick, onStart, onUpdateBlinds,
+  editSb, editBb, setEditSb, setEditBb,
 }: RoomLobbyProps) {
   const canStart = room.players.length >= 2;
   const isApproved = room.players.some(p => p.id === mySocketId);
@@ -115,44 +97,39 @@ export function RoomLobby({
 
   return (
     <Wrap>
-      {/* Room Code */}
-      <Card>
+      <Card accent>
         <RoomCodeBox>
           <div className="label">Room Code</div>
           <div className="code">{room.code}</div>
           <div className="share">Share this code with friends</div>
         </RoomCodeBox>
         <BlindsRow>
-          <div className="pill sb">SB: ${room.smallBlind.toFixed(2)}</div>
-          <div className="pill bb">BB: ${room.bigBlind.toFixed(2)}</div>
+          <div className="pill sb">SB ${room.smallBlind.toFixed(2)}</div>
+          <div className="pill bb">BB ${room.bigBlind.toFixed(2)}</div>
         </BlindsRow>
 
         {isDealer && (
           <BlindEditRow>
             <div>
-              <label>Small Blind</label>
+              <label>SMALL BLIND</label>
               <input type="number" value={editSb} onChange={e => setEditSb(e.target.value)} min={0.5} />
             </div>
             <div>
-              <label>Big Blind</label>
+              <label>BIG BLIND</label>
               <input type="number" value={editBb} onChange={e => setEditBb(e.target.value)} min={1} />
             </div>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => onUpdateBlinds(Number(editSb), Number(editBb))}
-            >
+            <Button variant="secondary" size="sm"
+              onClick={() => onUpdateBlinds(Number(editSb), Number(editBb))}>
               Save
             </Button>
           </BlindEditRow>
         )}
       </Card>
 
-      {/* Players */}
       <Card>
         <CardTitle>Players ({room.players.length}/10)</CardTitle>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {room.players.map((p, i) => (
+          {room.players.map((p) => (
             <PlayerCard
               key={p.id}
               player={p}
@@ -163,15 +140,14 @@ export function RoomLobby({
           ))}
         </div>
 
-        {/* Waiting section — dealer sees approve/deny */}
         {isDealer && room.waiting.length > 0 && (
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: 18 }}>
             <CardTitle>Waiting for Approval</CardTitle>
             {room.waiting.map(p => (
               <WaitingCard key={p.id}>
                 <div className="info">
                   <div className="name">{p.name}</div>
-                  <div className="req">Wants to join with ${p.chips.toFixed(2)}</div>
+                  <div className="req">wants ${p.chips.toFixed(2)}</div>
                 </div>
                 <div className="btns">
                   <ApproveBtn onClick={() => onApprove(p.id)}>✓</ApproveBtn>
@@ -182,14 +158,12 @@ export function RoomLobby({
           </div>
         )}
 
-        {/* Player waiting for approval */}
         {!isDealer && isWaiting && (
           <WaitingMsg>
             <span className="spin">⏳</span> Waiting for host to approve you...
           </WaitingMsg>
         )}
 
-        {/* Player approved, waiting for start */}
         {!isDealer && isApproved && (
           <WaitingMsg style={{ paddingTop: 8 }}>
             ✅ You're in! Waiting for host to start...
@@ -197,7 +171,6 @@ export function RoomLobby({
         )}
       </Card>
 
-      {/* Start Game Button */}
       {isDealer && (
         <div>
           <Button variant="primary" size="lg" fullWidth onClick={onStart} disabled={!canStart}>

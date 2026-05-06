@@ -3,98 +3,88 @@ import { Player } from '../../features/room/room.types';
 
 interface PlayerCardProps {
   player: Player;
-  isActive?: boolean;      // giliran dia
-  isMe?: boolean;          // user sendiri
-  sbIndex?: number;        // index small blind
-  bbIndex?: number;        // index big blind
-  playerIndex?: number;    // index di array players
-  onKick?: () => void;     // dealer bisa kick
+  isActive?: boolean;
+  isMe?: boolean;
+  sbIndex?: number;
+  bbIndex?: number;
+  playerIndex?: number;
+  onKick?: () => void;
   showKick?: boolean;
 }
 
 const Row = styled.div<{ $active?: boolean; $folded?: boolean; $myTurn?: boolean }>`
-  background: ${p => p.$myTurn ? 'rgba(0,229,160,0.07)' : 'var(--bg2)'};
-  border: 1.5px solid ${p => p.$active ? 'var(--accent)' : p.$folded ? 'transparent' : 'var(--border)'};
+  position: relative;
+  background: ${p => p.$myTurn
+    ? 'linear-gradient(135deg, rgba(255,87,51,0.10), rgba(212,175,55,0.06))'
+    : 'var(--bg3)'};
+  border: 1.5px solid ${p => p.$active ? 'var(--gold)' : p.$folded ? 'transparent' : 'var(--border)'};
   border-radius: var(--radius);
   padding: 12px 14px;
-  opacity: ${p => p.$folded ? 0.38 : 1};
+  opacity: ${p => p.$folded ? 0.42 : 1};
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  ${p => p.$active && `box-shadow: 0 0 0 1px rgba(212,175,55,0.25), 0 6px 18px -8px rgba(212,175,55,0.55);`}
 `;
 
-const Left = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
+const Left = styled.div`display: flex; align-items: center; gap: 12px;`;
 
-const Avatar = styled.div`
-  width: 38px; height: 38px;
-  background: var(--bg3);
+const Avatar = styled.div<{ $active?: boolean }>`
+  width: 40px; height: 40px;
+  background: var(--bg2);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  border: 2px solid var(--border);
+  font-size: 19px;
+  border: 2px solid ${p => p.$active ? 'var(--gold)' : 'var(--border-strong)'};
   flex-shrink: 0;
 `;
 
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-`;
+const Info = styled.div`display: flex; flex-direction: column; gap: 4px;`;
 
 const NameRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
 `;
 
 const Name = styled.span`
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 14px; font-weight: 700; color: var(--text);
 `;
 
-const Badge = styled.span<{ $color?: string }>`
-  font-size: 10px;
-  font-weight: 700;
+const Badge = styled.span<{ $color?: string; $bg?: string }>`
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
   color: ${p => p.$color ?? 'var(--text-muted)'};
-  background: ${p => p.$color ? `${p.$color}22` : 'var(--bg3)'};
-  padding: 1px 6px;
+  background: ${p => p.$bg ?? 'var(--bg2)'};
+  padding: 2px 7px;
   border-radius: 8px;
+  text-transform: uppercase;
 `;
 
 const TurnBadge = styled(Badge)`
-  background: var(--accent);
-  color: #0d1117;
+  background: var(--grad-brand);
+  color: #150A04;
 `;
 
 const Meta = styled.div`
   font-size: 11px;
   color: var(--text-muted);
-  display: flex;
-  gap: 6px;
-  align-items: center;
+  display: flex; gap: 8px; align-items: center;
 `;
 
-const Right = styled.div`
-  text-align: right;
-  flex-shrink: 0;
-`;
+const Right = styled.div`text-align: right; flex-shrink: 0;`;
 
 const Stack = styled.div`
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-family: 'DM Mono', monospace;
+  color: var(--text);
 `;
 
 const BetAmt = styled.div`
   font-size: 11px;
-  color: var(--yellow);
+  color: var(--gold);
   font-family: 'DM Mono', monospace;
   margin-top: 2px;
 `;
@@ -107,49 +97,40 @@ const KickBtn = styled.button`
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  &:hover { background: rgba(207,34,46,0.2); color: var(--red); }
+  &:hover { background: rgba(219,58,52,0.2); color: var(--crimson); }
 `;
 
 export function PlayerCard({
-  player,
-  isActive = false,
-  isMe = false,
-  sbIndex,
-  bbIndex,
-  playerIndex,
-  onKick,
-  showKick = false,
+  player, isActive = false, isMe = false,
+  sbIndex, bbIndex, playerIndex, onKick, showKick = false,
 }: PlayerCardProps) {
   const isSB = playerIndex !== undefined && playerIndex === sbIndex;
   const isBB = playerIndex !== undefined && playerIndex === bbIndex;
-
-  const avatar = player.isDealer ? '👑' : player.folded ? '🃏' : player.allIn ? '🔥' : '😊';
+  const avatar = player.isDealer ? '👑' : player.folded ? '🃏' : player.allIn ? '🔥' : '🂠';
 
   return (
     <Row $active={isActive} $folded={player.folded} $myTurn={isMe && isActive}>
       <Left>
-        <Avatar>{avatar}</Avatar>
+        <Avatar $active={isActive}>{avatar}</Avatar>
         <Info>
           <NameRow>
             <Name>{player.name}</Name>
-            {isMe && <Badge $color="var(--accent)">YOU</Badge>}
-            {player.isDealer && <Badge $color="var(--yellow)">HOST</Badge>}
+            {isMe && <Badge $color="#150A04" $bg="var(--gold-glow)">YOU</Badge>}
+            {player.isDealer && <Badge $color="#150A04" $bg="var(--sun)">HOST</Badge>}
             {isActive && !player.folded && <TurnBadge>TURN</TurnBadge>}
           </NameRow>
           <Meta>
-            {isSB && <span style={{ color: '#60a5fa' }}>🔵 SB</span>}
-            {isBB && <span style={{ color: '#fbbf24' }}>🟡 BB</span>}
-            {player.folded && <span style={{ color: 'var(--red)' }}>FOLDED</span>}
-            {player.allIn && !player.folded && <span style={{ color: 'var(--yellow)' }}>ALL IN</span>}
+            {isSB && <span style={{ color: 'var(--sun)' }}>● SB</span>}
+            {isBB && <span style={{ color: 'var(--gold)' }}>● BB</span>}
+            {player.folded && <span style={{ color: 'var(--crimson)' }}>FOLDED</span>}
+            {player.allIn && !player.folded && <span style={{ color: 'var(--brand)' }}>ALL IN</span>}
           </Meta>
         </Info>
       </Left>
 
       <Right>
         <Stack>${player.chips.toFixed(2)}</Stack>
-        {player.currentBet > 0 && (
-          <BetAmt>bet ${player.currentBet.toFixed(2)}</BetAmt>
-        )}
+        {player.currentBet > 0 && <BetAmt>bet ${player.currentBet.toFixed(2)}</BetAmt>}
       </Right>
 
       {showKick && !player.isDealer && (

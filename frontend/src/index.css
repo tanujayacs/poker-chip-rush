@@ -1,43 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Sora:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #0d1117;
-  --bg2: #161b22;
-  --bg3: #1c2333;
-  --border: #30363d;
-  --text: #e6edf3;
-  --text-muted: #7d8590;
-  --green: #2ea44f;
-  --green-hover: #3fb95f;
-  --red: #cf222e;
-  --red-hover: #e53e3e;
-  --blue: #1f6feb;
-  --yellow: #d29922;
-  --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.15);
-  --radius: 12px;
-  --radius-sm: 8px;
+  /* Surfaces */
+  --bg:         #050514;   /* Midnight Black */
+  --bg2:        #0B0B20;   /* Deep Navy (navbar/header) */
+  --bg3:        #1C1B22;   /* Charcoal Grey (cards/panels) */
+  --bg-elev:    #16162B;
+  --border:     rgba(255, 215, 130, 0.08);
+  --border-strong: rgba(255, 215, 130, 0.18);
+
+  /* Text */
+  --text:        #F5F5F5;   /* Off-White */
+  --text-muted:  #8E8CA0;
+  --text-dim:    #5C5A70;
+
+  /* Brand — gold/orange */
+  --brand:        #FF5733;  /* Vivid Orange (Rush) */
+  --brand-hover:  #FF7A55;
+  --gold:         #D4AF37;  /* Royal Gold (progression) */
+  --gold-glow:    #FFC857;
+  --sun:          #FFD700;  /* Sun Yellow (Dealer/SB/BB labels) */
+
+  /* Action semantics */
+  --mint:         #12B7A4;   /* Confirm / Call / Check */
+  --mint-hover:   #1AD4BD;
+  --crimson:      #DB3A34;   /* Fold / End / Danger */
+  --crimson-hover:#F0524C;
+
+  /* Legacy aliases */
+  --accent:       var(--brand);
+  --accent-dim:   rgba(255, 87, 51, 0.14);
+  --green:        var(--mint);
+  --green-hover:  var(--mint-hover);
+  --red:          var(--crimson);
+  --red-hover:    var(--crimson-hover);
+  --blue:         #4F8DFF;
+  --yellow:       var(--gold);
+
+  --radius:       14px;
+  --radius-sm:    10px;
+
+  --shadow-gold: 0 8px 28px -8px rgba(212, 175, 55, 0.45);
+  --shadow-brand:0 8px 28px -8px rgba(255, 87, 51, 0.55);
+
+  --grad-brand: linear-gradient(135deg, #FFB347 0%, #FF7A2E 50%, #FF5733 100%);
+  --grad-gold:  linear-gradient(135deg, #FFD86B 0%, #D4AF37 100%);
+  --grad-bg:    radial-gradient(1200px 600px at 50% -10%, rgba(255,87,51,0.12), transparent 60%),
+                radial-gradient(900px 500px at 50% 110%, rgba(212,175,55,0.08), transparent 60%),
+                #050514;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body, #root {
   height: 100%;
-  background: var(--bg);
+  background: var(--grad-bg);
+  background-attachment: fixed;
   color: var(--text);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Mobile-first: max 430px centered */
-#root {
-  display: flex;
-  justify-content: center;
-}
+#root { display: flex; justify-content: center; }
 
 .app-shell {
   width: 100%;
@@ -47,39 +72,46 @@ html, body, #root {
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
+  background: linear-gradient(180deg, rgba(11,11,32,0.6) 0%, rgba(5,5,20,0.95) 100%);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-/* Button base */
 button {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   outline: none;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  letter-spacing: 0.2px;
 }
 
-input {
-  font-family: 'DM Mono', monospace;
+input, select {
+  font-family: 'Sora', sans-serif;
   background: var(--bg3);
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 13px 14px;
   font-size: 15px;
   width: 100%;
   outline: none;
-  transition: border-color 0.15s;
+  transition: all 0.15s;
 }
 
-input:focus {
-  border-color: var(--accent);
+input:focus, select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.12);
 }
 
-input::placeholder {
-  color: var(--text-muted);
+/* Brand text helper */
+.brand-text {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 800;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 1px;
 }
