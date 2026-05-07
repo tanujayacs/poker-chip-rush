@@ -7,21 +7,23 @@ export interface Player {
   currentBet: number;
   folded: boolean;
   allIn: boolean;
-  isDealer: boolean; // true jika dia adalah room master
+  isDealer: boolean;
 }
 
 export interface Room {
   code: string;
-  dealerId: string;        // socket id dealer
-  dealerIsPlayer: boolean; // apakah dealer ikut main
-  players: Player[];       // sudah approved
-  waiting: Player[];       // menunggu approval
+  dealerId: string;
+  dealerIsPlayer: boolean;
+  players: Player[];
+  waiting: Player[];
   smallBlind: number;
   bigBlind: number;
   phase: GamePhase;
   pot: number;
   currentBet: number;
-  activePlayerIndex: number; // index di players[] yang sedang giliran
+  activePlayerIndex: number;
   handNumber: number;
-  sbIndex: number;          // index small blind di players[]
+  sbIndex: number;
+  bettingComplete: boolean;  // true = dealer bisa advance phase
+  lastRaiserIndex: number;   // -1 jika tidak ada raise; dipakai untuk BB option di preflop
 }

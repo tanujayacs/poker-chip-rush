@@ -11,13 +11,31 @@ import {
   emitUpdateBlinds, emitReconnect,
 } from '../features/room/room.socket';
 
-const Wrap = styled.div`display: flex; flex-direction: column; min-height: 100dvh; padding: 18px 16px 32px;`;
+const PageWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 16px 40px;
+`;
+
+const ContentWrap = styled.div`
+  width: 100%;
+  max-width: 500px;
+`;
 
 const TopBar = styled.div`
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
-  img { height: 32px; }
-  .hint { font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+  margin-bottom: 16px; width: 100%;
+  img { height: 28px; }
+  .hint {
+    font-size: 10px; color: var(--gold); letter-spacing: 1.5px;
+    text-transform: uppercase; font-weight: 700;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.25);
+    padding: 5px 12px; border-radius: 999px;
+  }
 `;
 
 const fadeIn = keyframes`from { opacity: 0; } to { opacity: 1; }`;
@@ -100,28 +118,30 @@ export default function Lobby() {
   if (!room) return (
     <Loader>
       <div className="spin">⚙</div>
-      Be patience, the host is preparing the room...
+      Be patient, the host is preparing the room...
     </Loader>
   );
 
   return (
-    <Wrap>
-      <TopBar>
-        <img src="/logo.png" alt="PCR" />
-        <div className="hint">Lobby</div>
-      </TopBar>
+    <PageWrap>
+      <ContentWrap>
+        <TopBar>
+          <img src="/logo.png" alt="PCR" />
+          <div className="hint">Lobby</div>
+        </TopBar>
 
-      <RoomLobby
-        room={room}
-        mySocketId={socket.id ?? ''}
-        isDealer={isDealer || room.dealerId === socket.id}
-        onApprove={(pid) => roomCode && emitApprovePlayer(socket, roomCode, pid)}
-        onKick={(pid) => roomCode && emitKickPlayer(socket, roomCode, pid)}
-        onStart={handleStart}
-        onUpdateBlinds={(sb, bb) => roomCode && emitUpdateBlinds(socket, roomCode, sb, bb)}
-        editSb={editSb} editBb={editBb}
-        setEditSb={setEditSb} setEditBb={setEditBb}
-      />
-    </Wrap>
+        <RoomLobby
+          room={room}
+          mySocketId={socket.id ?? ''}
+          isDealer={isDealer || room.dealerId === socket.id}
+          onApprove={(pid) => roomCode && emitApprovePlayer(socket, roomCode, pid)}
+          onKick={(pid) => roomCode && emitKickPlayer(socket, roomCode, pid)}
+          onStart={handleStart}
+          onUpdateBlinds={(sb, bb) => roomCode && emitUpdateBlinds(socket, roomCode, sb, bb)}
+          editSb={editSb} editBb={editBb}
+          setEditSb={setEditSb} setEditBb={setEditBb}
+        />
+      </ContentWrap>
+    </PageWrap>
   );
 }

@@ -1,33 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Sora:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Sora:wght@400;600;700&family=Montserrat:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Surfaces */
-  --bg:         #050514;   /* Midnight Black */
-  --bg2:        #0B0B20;   /* Deep Navy (navbar/header) */
-  --bg3:        #1C1B22;   /* Charcoal Grey (cards/panels) */
+  --bg:         #050514;
+  --bg2:        #0B0B20;
+  --bg3:        #1C1B22;
   --bg-elev:    #16162B;
   --border:     rgba(255, 215, 130, 0.08);
   --border-strong: rgba(255, 215, 130, 0.18);
 
-  /* Text */
-  --text:        #F5F5F5;   /* Off-White */
+  --text:        #F5F5F5;
   --text-muted:  #8E8CA0;
   --text-dim:    #5C5A70;
 
-  /* Brand — gold/orange */
-  --brand:        #FF5733;  /* Vivid Orange (Rush) */
+  --brand:        #FF5733;
   --brand-hover:  #FF7A55;
-  --gold:         #D4AF37;  /* Royal Gold (progression) */
+  --gold:         #D4AF37;
   --gold-glow:    #FFC857;
-  --sun:          #FFD700;  /* Sun Yellow (Dealer/SB/BB labels) */
+  --sun:          #FFD700;
 
-  /* Action semantics */
-  --mint:         #12B7A4;   /* Confirm / Call / Check */
+  --mint:         #12B7A4;
   --mint-hover:   #1AD4BD;
-  --crimson:      #DB3A34;   /* Fold / End / Danger */
+  --crimson:      #DB3A34;
   --crimson-hover:#F0524C;
 
-  /* Legacy aliases */
   --accent:       var(--brand);
   --accent-dim:   rgba(255, 87, 51, 0.14);
   --green:        var(--mint);
@@ -40,8 +35,8 @@
   --radius:       14px;
   --radius-sm:    10px;
 
-  --shadow-gold: 0 8px 28px -8px rgba(212, 175, 55, 0.45);
-  --shadow-brand:0 8px 28px -8px rgba(255, 87, 51, 0.55);
+  --shadow-gold:  0 8px 28px -8px rgba(212, 175, 55, 0.45);
+  --shadow-brand: 0 8px 28px -8px rgba(255, 87, 51, 0.55);
 
   --grad-brand: linear-gradient(135deg, #FFB347 0%, #FF7A2E 50%, #FF5733 100%);
   --grad-gold:  linear-gradient(135deg, #FFD86B 0%, #D4AF37 100%);
@@ -52,7 +47,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body, #root {
+html, body {
   height: 100%;
   background: var(--grad-bg);
   background-attachment: fixed;
@@ -62,19 +57,45 @@ html, body, #root {
   text-rendering: optimizeLegibility;
 }
 
-#root { display: flex; justify-content: center; }
+#root {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--grad-bg);
+  background-attachment: fixed;
+}
 
+/* ── App shell: full-width on mobile, centered card on desktop ── */
 .app-shell {
   width: 100%;
-  max-width: 430px;
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: hidden;
-  background: linear-gradient(180deg, rgba(11,11,32,0.6) 0%, rgba(5,5,20,0.95) 100%);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(11,11,32,0.65) 0%, rgba(5,5,20,0.97) 100%);
+}
+
+/* Tablet: constrain width and add border */
+@media (min-width: 540px) {
+  .app-shell {
+    max-width: 520px;
+    border-left: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+    box-shadow: 0 0 60px rgba(0,0,0,0.5);
+  }
+  #root {
+    padding: 0;
+    background-attachment: fixed;
+  }
+}
+
+/* Desktop: slightly wider */
+@media (min-width: 900px) {
+  .app-shell {
+    max-width: 560px;
+  }
 }
 
 button {
@@ -105,7 +126,6 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(212,175,55,0.12);
 }
 
-/* Brand text helper */
 .brand-text {
   font-family: 'Unbounded', sans-serif;
   font-weight: 800;

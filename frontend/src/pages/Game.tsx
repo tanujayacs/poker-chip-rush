@@ -13,23 +13,69 @@ import { onRoomState, onKicked, emitReconnect } from '../features/room/room.sock
 
 const slideUp = keyframes`from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); }`;
 const fadeIn = keyframes`from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); }`;
+const slideDown = keyframes`from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); }`;
 
-const Wrap = styled.div`display: flex; flex-direction: column; min-height: 100dvh;`;
+const Wrap = styled.div`
+  display: flex; flex-direction: column;
+  min-height: 100vh; min-height: 100dvh;
+`;
 
 const Header = styled.div`
   background: linear-gradient(180deg, var(--bg2), rgba(11,11,32,0.85));
   border-bottom: 1px solid var(--border-strong);
   padding: 10px 14px;
   display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
   img { height: 26px; }
   .hand {
     font-size: 11px; color: var(--gold);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 1px;
-    background: rgba(212,175,55,0.08);
-    border: 1px solid rgba(212,175,55,0.3);
+    font-family: 'DM Mono', monospace; letter-spacing: 1px;
+    background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.3);
     padding: 4px 10px; border-radius: 999px;
   }
+`;
+
+/* ── Toast notification ── */
+const Toast = styled.div<{ $type?: 'error' | 'info' | 'success' }>`
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  background: ${p =>
+    p.$type === 'error' ? 'rgba(219,58,52,0.95)' :
+    p.$type === 'success' ? 'rgba(18,183,164,0.95)' :
+    'rgba(28,27,34,0.97)'};
+  border: 1px solid ${p =>
+    p.$type === 'error' ? 'var(--crimson)' :
+    p.$type === 'success' ? 'var(--mint)' :
+    'var(--border-strong)'};
+  color: #fff; font-size: 13px; font-weight: 700;
+  padding: 10px 20px; border-radius: 999px;
+  z-index: 300; white-space: nowrap;
+  animation: ${slideDown} 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+`;
+
+/* ── Auto-award banner (shown briefly after auto pot award) ── */
+const AwardBanner = styled.div`
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 560px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(18,183,164,0.14));
+  border-bottom: 2px solid var(--gold);
+  padding: 14px 20px;
+  text-align: center; z-index: 200;
+  animation: ${slideDown} 0.25s ease;
+  .title { font-size: 15px; font-weight: 800; color: var(--gold); margin-bottom: 2px; }
+  .sub { font-size: 12px; color: var(--text-muted); }
+`;
+
+/* ── Pot reminder (shown when showdown but pot > 0) ── */
+const PotReminder = styled.div`
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.4);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px; margin-bottom: 12px;
+  text-align: center;
+  font-size: 12px; color: var(--gold); font-weight: 700;
+  animation: ${slideUp} 0.2s ease;
 `;
 
 const Overlay = styled.div`
@@ -43,36 +89,31 @@ const Sheet = styled.div`
   background: var(--bg3); border: 1px solid var(--border-strong);
   border-top: 2px solid var(--gold);
   border-radius: var(--radius) var(--radius) 0 0;
-  padding: 26px 22px; width: 100%; max-width: 430px;
+  padding: 26px 22px; width: 100%; max-width: 560px;
   animation: ${slideUp} 0.22s ease;
 `;
-const SheetTitle = styled.h3`
-  font-size: 19px; font-weight: 800; margin-bottom: 4px; color: var(--text);
-`;
+const SheetTitle = styled.h3`font-size: 19px; font-weight: 800; margin-bottom: 4px;`;
 const SheetSub = styled.p`font-size: 13px; color: var(--text-muted); margin-bottom: 20px;`;
 
 const InfoGrid = styled.div`
   display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
   .box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
+    background: var(--bg2); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 11px 13px;
     label { font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
-    strong { font-size: 17px; font-family: 'DM Mono', monospace; color: var(--text); }
+    strong { font-size: 17px; font-family: 'DM Mono', monospace; }
   }
 `;
-
 const BigInput = styled.input`
   font-size: 30px; font-weight: 800; text-align: center;
-  padding: 16px; margin-bottom: 6px; border-radius: var(--radius-sm);
-  color: var(--gold);
+  padding: 16px; margin-bottom: 6px; border-radius: var(--radius-sm); color: var(--gold);
   border-color: var(--border-strong);
 `;
 const MinMax = styled.p`font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 16px; font-family: 'DM Mono', monospace;`;
 const QuickRow = styled.div`
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 18px;
   button {
-    background: var(--bg2); border: 1px solid var(--border-strong); color: var(--text);
+    background: var(--bg2); border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm); padding: 11px; font-size: 12px; font-weight: 700;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     span { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono'; }
@@ -81,23 +122,20 @@ const QuickRow = styled.div`
 `;
 const ModalBtns = styled.div`display: grid; grid-template-columns: 1fr 2fr; gap: 10px;`;
 const BtnCancel = styled.button`
-  background: var(--bg2); border: 1px solid var(--border-strong); color: var(--text);
+  background: var(--bg2); border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700;
 `;
 const BtnConfirm = styled.button<{ $danger?: boolean }>`
   background: ${p => p.$danger ? 'var(--crimson)' : 'var(--grad-brand)'};
   color: ${p => p.$danger ? '#fff' : '#150A04'};
   border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 800;
-  letter-spacing: 0.4px;
   box-shadow: ${p => p.$danger ? 'none' : 'var(--shadow-brand)'};
   &:hover { filter: brightness(1.05); }
   &:disabled { opacity: 0.45; cursor: not-allowed; filter: none; box-shadow: none; }
 `;
 
 const WinnerOpt = styled.div<{ $sel?: boolean }>`
-  background: ${p => p.$sel
-    ? 'linear-gradient(135deg, rgba(212,175,55,0.14), rgba(255,200,87,0.1))'
-    : 'var(--bg2)'};
+  background: ${p => p.$sel ? 'linear-gradient(135deg, rgba(212,175,55,0.14), rgba(255,200,87,0.1))' : 'var(--bg2)'};
   border: 1.5px solid ${p => p.$sel ? 'var(--gold)' : 'var(--border)'};
   border-radius: var(--radius-sm); padding: 14px 16px; cursor: pointer; margin-bottom: 8px;
   display: flex; align-items: center; justify-content: space-between;
@@ -106,22 +144,15 @@ const WinnerOpt = styled.div<{ $sel?: boolean }>`
   &:hover { border-color: var(--gold); }
 `;
 const PotBox = styled.div`
-  background: var(--bg2);
-  border: 1px solid rgba(212,175,55,0.3);
+  background: var(--bg2); border: 1px solid rgba(212,175,55,0.3);
   border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 14px;
   label { font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
-  strong {
-    font-size: 24px; font-family: 'DM Mono'; font-weight: 800;
-    background: var(--grad-gold);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  strong { font-size: 24px; font-family: 'DM Mono'; font-weight: 800; background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
 `;
-
 const StyledSelect = styled.select`
   width: 100%; background: var(--bg2); border: 1px solid var(--border-strong);
   color: var(--text); border-radius: var(--radius-sm); padding: 13px 14px;
-  font-size: 15px; font-family: 'Syne', sans-serif; margin-bottom: 12px;
-  outline: none; appearance: none;
+  font-size: 15px; margin-bottom: 12px; outline: none; appearance: none;
   &:focus { border-color: var(--gold); }
 `;
 
@@ -131,15 +162,10 @@ const EndOverlay = styled.div`
 `;
 const EndCard = styled.div`
   background: var(--bg3); border: 1px solid var(--border-strong);
-  border-top: 3px solid var(--gold);
-  border-radius: var(--radius);
-  padding: 30px 24px; width: 100%; max-width: 380px;
+  border-top: 3px solid var(--gold); border-radius: var(--radius);
+  padding: 30px 24px; width: 100%; max-width: 420px;
   animation: ${fadeIn} 0.3s ease;
-  h2 {
-    font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 4px;
-    background: var(--grad-gold);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  h2 { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 4px; background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .sub { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
 `;
 const RankItem = styled.div<{ $rank: number }>`
@@ -161,6 +187,11 @@ const HomeBtn = styled.button`
   &:hover { filter: brightness(1.06); }
 `;
 
+interface ToastState {
+  msg: string;
+  type: 'error' | 'info' | 'success';
+}
+
 export default function Game() {
   const { roomCode } = useParams<{ roomCode: string }>();
   const navigate = useNavigate();
@@ -176,19 +207,66 @@ export default function Game() {
   const [rebuyAmt, setRebuyAmt] = useState('');
   const [showEndConfirm, setShowEndConfirm] = useState(false);
   const [finalPlayers, setFinalPlayers] = useState<Player[] | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
+  const [autoAward, setAutoAward] = useState<{ name: string; pot: number } | null>(null);
+  const [potAwarded, setPotAwarded] = useState(false); // apakah pot sudah diberikan di hand ini
+
+  const showToast = (msg: string, type: ToastState['type'] = 'info') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     if (!socket.connected) socket.connect();
     setMyId(socket.id ?? '');
 
-    const offState = onRoomState(socket, (r) => { setLocalRoom(r); setRoom(r); });
+    const offState = onRoomState(socket, (r) => {
+      setLocalRoom(r);
+      setRoom(r);
+      // Reset potAwarded flag ketika hand baru dimulai
+      if (r.phase === 'preflop') {
+        setPotAwarded(false);
+      }
+    });
     const offEnded = onGameEnded(socket, ({ players }) => setFinalPlayers(players));
     const offKicked = onKicked(socket, () => navigate('/'));
+
+    // Winner declared (manual atau auto)
+    socket.on('winner_declared', ({ winnerIds, pot, players, auto }: {
+      winnerIds: string[], pot: number, players: Player[], auto: boolean
+    }) => {
+      setPotAwarded(true);
+      if (auto) {
+        // Cari nama winner
+        const winner = players.find(p => winnerIds.includes(p.id));
+        if (winner) {
+          setAutoAward({ name: winner.name, pot });
+          setTimeout(() => setAutoAward(null), 3500);
+        }
+      } else {
+        // Manual declare - close modal jika masih buka
+        setShowWinner(false);
+        setSelWinners([]);
+      }
+    });
+
+    // Error toasts
+    socket.on('advance_error', ({ message }: { message: string }) => showToast(message, 'error'));
+    socket.on('rebuy_error', ({ message }: { message: string }) => showToast(message, 'error'));
+    socket.on('end_error', ({ message }: { message: string }) => showToast(message, 'error'));
+    socket.on('start_error', ({ message }: { message: string }) => showToast(message, 'error'));
 
     const savedName = myName ?? localStorage.getItem('pcr_name');
     if (savedName && roomCode) emitReconnect(socket, roomCode, savedName);
 
-    return () => { offState(); offEnded(); offKicked(); };
+    return () => {
+      offState(); offEnded(); offKicked();
+      socket.off('winner_declared');
+      socket.off('advance_error');
+      socket.off('rebuy_error');
+      socket.off('end_error');
+      socket.off('start_error');
+    };
   }, [roomCode]);
 
   if (finalPlayers) {
@@ -233,19 +311,35 @@ export default function Game() {
     emitPlayerAction(socket, roomCode, 'raise', n);
     setShowRaise(false); setRaiseAmt('');
   };
+
   const handleDeclare = () => {
     if (!roomCode || selWinners.length === 0) return;
     emitDeclareWinner(socket, roomCode, selWinners);
-    setShowWinner(false); setSelWinners([]);
+    // Modal akan ditutup oleh winner_declared event
   };
+
   const handleRebuy = () => {
     if (!roomCode || !rebuyPlayerId || !rebuyAmt) return;
     emitRebuy(socket, roomCode, rebuyPlayerId, Number(rebuyAmt));
     setShowRebuy(false); setRebuyAmt(''); setRebuyPlayerId('');
   };
 
+  // Pot reminder: showdown tapi pot > 0 dan belum di-award
+  const showPotReminder = amIDealer && room.phase === 'showdown' && room.pot > 0 && !potAwarded;
+
   return (
     <Wrap>
+      {/* Toast */}
+      {toast && <Toast $type={toast.type}>{toast.msg}</Toast>}
+
+      {/* Auto-award banner */}
+      {autoAward && (
+        <AwardBanner>
+          <div className="title">🏆 {autoAward.name} wins ${autoAward.pot.toFixed(2)}!</div>
+          <div className="sub">All other players folded — pot automatically awarded</div>
+        </AwardBanner>
+      )}
+
       <Header>
         <img src="/logo.png" alt="PCR" />
         <div className="hand">HAND #{room.handNumber}</div>
@@ -255,27 +349,47 @@ export default function Game() {
         room={room}
         mySocketId={socket.id ?? ''}
         isDealer={amIDealer}
+        isDealerPlayer={room.dealerIsPlayer}
         onAction={(action, amount) => roomCode && emitPlayerAction(socket, roomCode, action as any, amount)}
         onAdvancePhase={() => roomCode && emitAdvancePhase(socket, roomCode)}
         onDeclareWinner={() => setShowWinner(true)}
-        onNewHand={() => roomCode && emitNewHand(socket, roomCode)}
+        onNewHand={() => {
+          // Cek apakah pot sudah diberikan
+          if (room.pot > 0 && !potAwarded) {
+            showToast('⚠️ Pot belum diberikan ke pemenang!', 'error');
+            return;
+          }
+          roomCode && emitNewHand(socket, roomCode);
+        }}
         onRebuy={() => setShowRebuy(true)}
         onEndGame={() => setShowEndConfirm(true)}
         onRaiseClick={() => { setRaiseAmt(''); setShowRaise(true); }}
       />
 
+      {/* Pot reminder (inside dealer controls sheet area) */}
+      {showPotReminder && !showWinner && (
+        <div style={{ padding: '0 14px 8px', flexShrink: 0 }}>
+          <PotReminder>
+            ⚠️ Pot ${room.pot.toFixed(2)} belum diberikan — tekan Declare Winner!
+          </PotReminder>
+        </div>
+      )}
+
+      {/* ── Raise modal ── */}
       {showRaise && myPlayer && (
         <Overlay onClick={() => setShowRaise(false)}>
           <Sheet onClick={e => e.stopPropagation()}>
             <SheetTitle>Raise Amount</SheetTitle>
-            <SheetSub>Enter the total amount you want to raise to</SheetSub>
+            <SheetSub>Enter the amount you want to raise by</SheetSub>
             <InfoGrid>
               <div className="box"><label>Current Bet</label><strong>${room.currentBet.toFixed(2)}</strong></div>
               <div className="box"><label>Your Stack</label><strong>${myPlayer.chips.toFixed(2)}</strong></div>
             </InfoGrid>
-            <BigInput type="number" placeholder="0" value={raiseAmt}
+            <BigInput
+              type="number" placeholder="0" value={raiseAmt}
               onChange={e => setRaiseAmt(e.target.value)}
-              min={room.bigBlind} max={myPlayer.chips} autoFocus />
+              min={room.bigBlind} max={myPlayer.chips} autoFocus
+            />
             <MinMax>Min ${room.bigBlind.toFixed(2)} • Max ${myPlayer.chips.toFixed(2)}</MinMax>
             <QuickRow>
               <button onClick={() => setRaiseAmt(String(room.bigBlind * 2))}>
@@ -298,6 +412,7 @@ export default function Game() {
         </Overlay>
       )}
 
+      {/* ── Declare winner modal ── */}
       {showWinner && (
         <Overlay onClick={() => setShowWinner(false)}>
           <Sheet onClick={e => e.stopPropagation()}>
@@ -331,6 +446,7 @@ export default function Game() {
         </Overlay>
       )}
 
+      {/* ── Rebuy modal ── */}
       {showRebuy && (
         <Overlay onClick={() => setShowRebuy(false)}>
           <Sheet onClick={e => e.stopPropagation()}>
@@ -342,9 +458,11 @@ export default function Game() {
                 <option key={p.id} value={p.id}>{p.name} — ${p.chips.toFixed(2)}</option>
               ))}
             </StyledSelect>
-            <input type="number" placeholder="Amount to add"
+            <input
+              type="number" placeholder="Amount to add"
               value={rebuyAmt} onChange={e => setRebuyAmt(e.target.value)}
-              style={{ marginBottom: 20 }} />
+              style={{ marginBottom: 20 }}
+            />
             <ModalBtns>
               <BtnCancel onClick={() => setShowRebuy(false)}>Cancel</BtnCancel>
               <BtnConfirm onClick={handleRebuy} disabled={!rebuyPlayerId || !rebuyAmt}>
@@ -355,16 +473,20 @@ export default function Game() {
         </Overlay>
       )}
 
+      {/* ── End game confirm ── */}
       {showEndConfirm && (
         <Overlay onClick={() => setShowEndConfirm(false)}>
           <Sheet onClick={e => e.stopPropagation()}>
             <SheetTitle>End Game Session?</SheetTitle>
             <SheetSub style={{ marginBottom: 24 }}>
-              This will show final results for all players. Are you sure?
+              This will show final results for all players and close the room.
             </SheetSub>
             <ModalBtns>
               <BtnCancel onClick={() => setShowEndConfirm(false)}>Cancel</BtnCancel>
-              <BtnConfirm $danger onClick={() => { setShowEndConfirm(false); roomCode && emitEndGame(socket, roomCode); }}>
+              <BtnConfirm $danger onClick={() => {
+                setShowEndConfirm(false);
+                roomCode && emitEndGame(socket, roomCode);
+              }}>
                 End Game & Settle
               </BtnConfirm>
             </ModalBtns>

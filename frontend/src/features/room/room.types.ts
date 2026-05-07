@@ -24,6 +24,8 @@ export interface Room {
   activePlayerIndex: number;
   handNumber: number;
   sbIndex: number;
+  bettingComplete: boolean;
+  lastRaiserIndex: number;
 }
 
 export interface CreateRoomPayload {
