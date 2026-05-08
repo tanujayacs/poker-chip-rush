@@ -116,6 +116,7 @@ const QuickRow = styled.div`
     background: var(--bg2); border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm); padding: 11px; font-size: 12px; font-weight: 700;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: #fff;
     span { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono'; }
     &:hover { border-color: var(--gold); color: var(--gold); }
   }
@@ -124,6 +125,7 @@ const ModalBtns = styled.div`display: grid; grid-template-columns: 1fr 2fr; gap:
 const BtnCancel = styled.button`
   background: var(--bg2); border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700;
+  color: #fff;
 `;
 const BtnConfirm = styled.button<{ $danger?: boolean }>`
   background: ${p => p.$danger ? 'var(--crimson)' : 'var(--grad-brand)'};
@@ -328,7 +330,7 @@ export default function Game() {
   const showPotReminder = amIDealer && room.phase === 'showdown' && room.pot > 0 && !potAwarded;
 
   return (
-    <Wrap>
+    <Wrap style={{ marginTop: '10px' }}>
       {/* Toast */}
       {toast && <Toast $type={toast.type}>{toast.msg}</Toast>}
 
