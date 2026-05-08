@@ -168,7 +168,7 @@ const LogoWrap = styled.div`
   animation: ${float} 6s ease-in-out infinite;
   margin-bottom: 16px;
   img {
-    width: 120px; height: auto;
+    width: 250px; height: auto;
     filter: drop-shadow(0 8px 32px rgba(255,87,51,0.4))
             drop-shadow(0 2px 12px rgba(212,175,55,0.3));
   }
@@ -270,7 +270,7 @@ export default function Home() {
       </TopBar>
 
       {/* ── Logo ── */}
-      <Hero>
+      <Hero style={{ marginTop: '180px' }}>
         <LogoWrap>
           <img src="/logo.png" alt="PokerChipRush" />
         </LogoWrap>
@@ -368,10 +368,10 @@ export default function Home() {
                   <span className="icon">✉️</span>
                   <div className="info">
                     <div className="label">Email</div>
-                    <div className="val">pokerchiprush@gmail.com</div>
+                    <div className="val">tanujayacs@gmail.com</div>
                   </div>
                 </ContactBox>
-                <ContactBox href="https://github.com" target="_blank" rel="noopener noreferrer">
+                <ContactBox href="https://github.com/tanujayacs/poker-chip-rush" target="_blank" rel="noopener noreferrer">
                   <span className="icon">🐙</span>
                   <div className="info">
                     <div className="label">GitHub</div>

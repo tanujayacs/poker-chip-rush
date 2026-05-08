@@ -372,7 +372,7 @@ export default function Game() {
       {showPotReminder && !showWinner && (
         <div style={{ padding: '0 14px 8px', flexShrink: 0 }}>
           <PotReminder>
-            ⚠️ Pot ${room.pot.toFixed(2)} belum diberikan — tekan Declare Winner!
+            ⚠️ The ${room.pot.toFixed(2)} pot has not been awarded yet — press “Declare Winner”!
           </PotReminder>
         </div>
       )}
